@@ -1,7 +1,6 @@
 <template>
-
     <main class="form-signin">
-        <form method="post">
+        <form>
             <h1 class="h3 mb-3 fw-normal">Login</h1>
             <h3 class="mb-3 errorMsg"></h3>
             <div class="form-floating">
@@ -17,14 +16,14 @@
                 <label for="floatingAvatar">Avatar</label>
                 
             </div>
-            <button @click.prevent="onClickButton" class="w-100 btn btn-lg btn-primary" type="submit">Join</button>
+            <button @submit.prevent="onClickButton({ loginId, nickname, avatar })" class="w-100 btn btn-lg btn-primary" type="submit">Join</button>
         </form>
         <p class="mt-5 mb-3 text-muted">&copy; GeonYeong</p>
     </main>
-
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 
 export default {
     name: "Login",
@@ -36,9 +35,9 @@ export default {
         }
     },
     methods: {
-        onClickButton() {
-            console.log(this.loginId, this.nickname, this.avatar);
-        }
+        ...mapMutations({
+            onClickButton: "onJoinButton"
+        })
     }
 }
 </script>
