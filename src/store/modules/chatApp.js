@@ -22,9 +22,6 @@ const mutations = {
         state.loginId = loginId;
         state.nickname = nickname;
         state.avatar = avatar;
-        console.log(state.loginId, state.nickname, state.avatar);
-        console.log(this.$route)
-        this.$route.push("/");
     }
 }
 

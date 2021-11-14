@@ -7,17 +7,15 @@
                     <ul class="list-group col-10 netStatus">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="">
-                                네트워크 상태
-                                <span class="badge bg-primary rounded-pill">On</span>
+                                네트워크 상태 {{ this.$store.state.loginId }}
+                                <span class="badge bg-primary rounded-pill">{{ this.networkStatus ? "On" : "Off" }}</span>
                             </div>
-                            
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="card-body">
                 <ul>
-                    <li></li>
                 </ul>
             </div>
             <div class="input-group">
@@ -34,8 +32,11 @@ export default {
     name: "Chat",
     data() {
         return {
-            
+            networkStatus: false
         }
+    },
+    methods: {
+
     }
 }
 </script>
