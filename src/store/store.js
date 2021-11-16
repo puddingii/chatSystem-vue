@@ -17,7 +17,8 @@ export const store = new Vuex.Store({
             transports: ['websocket']
         }),
         networkStatus: false,
-        chatLogs: []
+        chatLogs: [],
+        cntLikes: 0
     },
     getters: {
         getCountLog(state) {
@@ -41,15 +42,17 @@ export const store = new Vuex.Store({
         exitRoom(state) {
             state.socket.disconnect();
         },
-        listenSocketEvent(state ) {
+        listenSocketEvent(state) {
             state.socket.on("connect", () => {
                 state.networkStatus = true;
                 console.log(`Socket connection : ${state.networkStatus}`);
             });
             state.socket.on("disconnect", (reason) => {
                 state.socket.connect();
-                console.log(state.socket.disconnected, reason)
-                console.log(`Socket is disconnected : ${state.networkStatus}`);
+                if(state.socket.disconnected) {
+                    this.networkStatus = false;
+                }
+                console.log(`Socket tried to reconnect - Status : ${state.networkStatus}, Reason : ${reason}`);
             });
             state.socket.on("error", (err) => {
                 state.chatLogs.push({ loginId: SYSTEM_ID, avatar: false, value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
@@ -90,6 +93,9 @@ export const store = new Vuex.Store({
                             }
                         });
                         break;
+                    case "rcvPlayLikeAni":
+                        state.cntLikes++;
+                        break;
                 }
             });
         },
@@ -100,6 +106,9 @@ export const store = new Vuex.Store({
             }
             state.socket.emit("message", packet);
             state.chatLogs.push(userInfo);
+        },
+        sendLike(state) {
+            state.socket.emit("message", { cmd: "sendLike" })
         },
         onJoinButton(state, userInfo) {
             const { loginId, nickname, avatar } = userInfo;
