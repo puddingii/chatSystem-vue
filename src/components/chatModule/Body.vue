@@ -1,11 +1,11 @@
 <template>
     <div ref="chatBoard" class="card-body chatBoard">
         <ul class="chatBoardUl">
-            <li :class="chkUser(log)" v-for="log in this.$store.state.chatLogs" class="chatLogForm">
-                <div v-if="chkUser(log) === 'myLog'" class="logForm">
+            <li :class="logOwner(log)" v-for="log in this.$store.state.chatLogs" class="chatLogForm">
+                <div v-if="logOwner(log) === 'myLog'" class="logForm">
                     <div class="myLogBorder border rounded">{{log.value}}</div>
                 </div>
-                <span v-else-if="chkUser(log) === 'systemLog'" class="systemChatLog border rounded">System - {{log.value}}</span>
+                <span v-else-if="logOwner(log) === 'systemLog'" class="systemChatLog border rounded">System - {{log.value}}</span>
                 <div class="anotherUserLogForm" v-else>
                     <img :src="log.avatar" class="avatarImg border rounded-circle">
                         {{log.nickname}}
@@ -29,7 +29,7 @@ export default {
         this.$refs.chatBoard.scrollTop = this.$refs.chatBoard.scrollHeight - this.$refs.chatBoard.clientHeight;
     },
     methods: {
-        chkUser(userInfo) {
+        logOwner(userInfo) {
             if(userInfo.nickname === this.$store.state.nickname) 
                 return "myLog";
             else if(userInfo.nickname === "SYSTEM")

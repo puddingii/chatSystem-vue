@@ -1,14 +1,10 @@
 <template>
     <div class="container">
         <div class="card chatForm">
-            <ChatHeader @onClickExit="onClickExit"></ChatHeader>
+            <ChatHeader @onClickLike="sendLike" @onClickExit="onClickExit"></ChatHeader>
             <ChatBody></ChatBody>
-            <div class="input-group">
-                <input type="text" @keydown.enter="sendChat()" v-model="chatValue" class="form-control" placeholder="Chat Input" aria-describedby="btnGroupAddon">
-                <button @click="sendChat()" class="input-group-text btn btn-primary" id="btnGroupAddon">></button>
-                <button @click="sendLike()" class="input-group-text btn btn-danger" id="btnGroupAddon">👍</button>
-            </div>
-            <div class="card-footer text-muted">@ GeonYeong</div>
+            <ChatInput @onClickSend="sendChat"></ChatInput>
+            <ChatFooter></ChatFooter>
         </div>
     </div>
 </template>
@@ -16,12 +12,13 @@
 <script>
 import ChatHeader from "./chatModule/Header.vue";
 import ChatBody from "./chatModule/Body.vue";
+import ChatInput from "./chatModule/Input.vue";
+import ChatFooter from "./chatModule/Footer.vue";
 
 export default {
     name: "Chat",
     data() {
         return {
-            chatValue: ""
         }
     },
     beforeCreate() {
@@ -32,13 +29,12 @@ export default {
             this.$store.commit("exitRoom");
             this.$router.push("/login");
         },
-        sendChat() {
-            if(this.chatValue === "") {
+        sendChat(value) {
+            if(value === "" || !value) {
                 return;
             }
-            const userInfo = { nickname: this.$store.state.nickname, avatar: this.$store.state.avatar, value: this.chatValue };
+            const userInfo = { nickname: this.$store.state.nickname, avatar: this.$store.state.avatar, value };
             this.$store.commit("sendMsg", userInfo);
-            this.chatValue = "";
         },
         sendLike() {
             this.$store.commit("sendLike");
@@ -54,7 +50,9 @@ export default {
     },
     components: {
         ChatHeader,
-        ChatBody
+        ChatBody,
+        ChatInput,
+        ChatFooter
     }
 }
 </script>

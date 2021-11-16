@@ -8,13 +8,13 @@
                         네트워크 상태
                         <span class="badge bg-primary rounded-pill">{{ this.$store.state.networkStatus ? "On" : "Off" }}</span>
                     </div>
-                    <span class="btn btn-outline-primary position-relative">
+                    <button class="btn btn-outline-primary position-relative" @click="onClickLike">
                         👍
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
                             {{ this.$store.state.cntLikes }}
                             <span class="visually-hidden">Likes</span>
                         </span>
-                    </span>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -26,7 +26,10 @@ export default {
     methods: {
         onClickExit() {
             this.$emit("onClickExit");
-        }
+        },
+        onClickLike() {
+            this.$emit("onClickLike");
+        },
     }
 }
 </script>
