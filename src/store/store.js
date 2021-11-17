@@ -6,6 +6,7 @@ import ENV from "../config";
 Vue.use(Vuex);
 
 const SYSTEM_ID = "SYSTEM";
+const MAX_VIEW_CNT = 3;
 
 export const store = new Vuex.Store({
     state: {
@@ -20,6 +21,9 @@ export const store = new Vuex.Store({
         chatLogs: [],
         cntLikes: 0,
         alertMsg: [],
+        toastContainer: null,
+        bootstrapToasts: [],
+        startCnt: 0
     },
     getters: {
         getCountLog(state) {
@@ -27,8 +31,35 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
+        initToastContainer(state, container) {
+            state.toastContainer = container;
+        },
+        showAllAlertMsg(state) {
+            for(let i = 0; i < state.bootstrapToasts.length; i++) {
+                const toastClass = state.bootstrapToasts[i]._element.classList;
+                if(!toastClass.contains("show")) {
+                    state.bootstrapToasts.forEach((toast) => {
+                        toast.show();
+                    });
+                    return;
+                }
+            }
+            state.bootstrapToasts.forEach((toast) => {
+                toast.hide();
+            });
+        },
+        updateAndShowAlert(state, addedToast) {
+            const bsToast = new bootstrap.Toast(addedToast);
+            state.bootstrapToasts.push(bsToast);
+
+            if(state.bootstrapToasts.length > MAX_VIEW_CNT) {
+                for(let i = 0; i < state.bootstrapToasts.length - MAX_VIEW_CNT; i++)
+                    state.bootstrapToasts[i].hide();
+            }
+            bsToast.show();
+        },
         deleteToast(state, index) {
-            state.alertMsg.splice(index, 1);
+            state.bootstrapToasts[index].hide();
         },
         enterRoom(state) {
             const packet = {
