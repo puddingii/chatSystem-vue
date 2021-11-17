@@ -23,9 +23,6 @@ export default {
         return {
         }
     },
-    beforeCreate() {
-        this.$store.commit("enterRoom");
-    },
     methods: {
         exitRoom() {
             this.$store.commit("exitRoom");
