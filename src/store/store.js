@@ -5,7 +5,7 @@ import "regenerator-runtime";
 import ENV from "../config";
 Vue.use(Vuex);
 
-const SYSTEM_ID = "SYSTEM"
+const SYSTEM_ID = "SYSTEM";
 
 export const store = new Vuex.Store({
     state: {
@@ -18,7 +18,8 @@ export const store = new Vuex.Store({
         }),
         networkStatus: false,
         chatLogs: [],
-        cntLikes: 0
+        cntLikes: 0,
+        alertMsg: [],
     },
     getters: {
         getCountLog(state) {
@@ -26,6 +27,9 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
+        deleteToast(state, index) {
+            state.alertMsg.splice(index, 1);
+        },
         enterRoom(state) {
             const packet = {
                 cmd: "reqRoomEnter",
@@ -35,7 +39,7 @@ export const store = new Vuex.Store({
             };
             state.socket.emit("message", packet, (ack) => {
                 if(ack.success === "n") {
-                    state.chatLogs.push({ loginId: SYSTEM_ID, avatar: false, value: "Failed to send message!"});
+                    state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "Failed to send message!"});
                 }
             });
         },
@@ -45,17 +49,15 @@ export const store = new Vuex.Store({
         listenSocketEvent(state) {
             state.socket.on("connect", () => {
                 state.networkStatus = true;
-                console.log(`Socket connection : ${state.networkStatus}`);
             });
             state.socket.on("disconnect", (reason) => {
                 state.socket.connect();
                 if(state.socket.disconnected) {
                     this.networkStatus = false;
                 }
-                console.log(`Socket tried to reconnect - Status : ${state.networkStatus}, Reason : ${reason}`);
             });
             state.socket.on("error", (err) => {
-                state.chatLogs.push({ loginId: SYSTEM_ID, avatar: false, value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
+                state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
             });
             state.socket.on("message", (packet) => {
                 console.log(packet);
@@ -89,12 +91,16 @@ export const store = new Vuex.Store({
                                 state.networkStatus = false;
                             }
                             else {
-                                state.chatLogs.push({ loginId: SYSTEM_ID, avatar: false, value: "Failed to room out!"});
+                                state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "Failed to room out!"});
                             }
                         });
                         break;
                     case "rcvPlayLikeAni":
                         state.cntLikes++;
+                        break;
+                    case "rcvAlertMsg":
+                        const { msg } = packet;
+                        state.alertMsg.push(msg);
                         break;
                 }
             });
@@ -106,6 +112,13 @@ export const store = new Vuex.Store({
             }
             state.socket.emit("message", packet);
             state.chatLogs.push(userInfo);
+            /* 임시 테스트 */
+            // fetch("https://devsol6.club5678.com:6666/sendalert/user/test1", {
+            //     method: "POST",
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ "msg": userInfo.value })
+            // });
+            state.alertMsg.push(userInfo.value);
         },
         sendLike(state) {
             state.socket.emit("message", { cmd: "sendLike" })

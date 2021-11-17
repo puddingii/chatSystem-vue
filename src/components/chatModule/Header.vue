@@ -8,13 +8,24 @@
                         네트워크 상태
                         <span class="badge bg-primary rounded-pill">{{ this.$store.state.networkStatus ? "On" : "Off" }}</span>
                     </div>
-                    <button class="btn btn-outline-primary position-relative" @click="onClickLike">
-                        👍
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
-                            {{ this.$store.state.cntLikes }}
-                            <span class="visually-hidden">Likes</span>
-                        </span>
-                    </button>
+                    <div>
+                        <button class="btn btn-outline-primary position-relative likeBtn" @click="onClickLike">
+                            👍
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
+                                {{ this.$store.state.cntLikes }}
+                                <span class="visually-hidden">Likes</span>
+                            </span>
+                        </button>
+                        <button ref="alertBtn" type="button" data-bs-toggle="popover" class="btn btn-outline-primary position-relative" 
+                        title="Alert message" data-bs-content="And here's some amazing content. It's very engaging. Right?"
+                        data-bs-trigger="hover focus" @click="onClickAlert">
+                            ✉️
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
+                                {{ this.$store.state.alertMsg.length }}
+                                <span class="visually-hidden">Likes</span>
+                            </span>
+                        </button>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -30,6 +41,9 @@ export default {
         onClickLike() {
             this.$emit("onClickLike");
         },
+        onClickAlert() {
+            this.$emit("onClickAlert");
+        }
     }
 }
 </script>
@@ -41,5 +55,9 @@ export default {
 
 .netStatus{
     padding-right:0px;
+}
+
+.likeBtn{
+    margin-right: 5px;
 }
 </style>

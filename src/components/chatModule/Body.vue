@@ -1,7 +1,7 @@
 <template>
     <div ref="chatBoard" class="card-body chatBoard">
         <ul class="chatBoardUl">
-            <li :class="logOwner(log)" v-for="log in this.$store.state.chatLogs" class="chatLogForm">
+            <li :class="logOwner(log)" v-for="(log, index) in this.$store.state.chatLogs" :key="index" class="chatLogForm">
                 <div v-if="logOwner(log) === 'myLog'" class="logForm">
                     <div class="myLogBorder border rounded">{{log.value}}</div>
                 </div>
