@@ -6,7 +6,7 @@ import ENV from "../config";
 Vue.use(Vuex);
 
 const SYSTEM_ID = "SYSTEM";
-const MAX_VIEW_CNT = 3;
+const MAX_VIEW_CNT = 12;
 
 export const store = new Vuex.Store({
     state: {
@@ -35,18 +35,19 @@ export const store = new Vuex.Store({
             state.toastContainer = container;
         },
         showAllAlertMsg(state) {
+            let isAllShowed = true;
             for(let i = 0; i < state.bootstrapToasts.length; i++) {
                 const toastClass = state.bootstrapToasts[i]._element.classList;
                 if(!toastClass.contains("show")) {
-                    state.bootstrapToasts.forEach((toast) => {
-                        toast.show();
-                    });
-                    return;
+                    state.bootstrapToasts[i].show();
+                    isAllShowed = false;
                 }
             }
-            state.bootstrapToasts.forEach((toast) => {
-                toast.hide();
-            });
+            if(isAllShowed) {
+                state.bootstrapToasts.forEach((toast) => {
+                    toast.hide();
+                });
+            }
         },
         updateAndShowAlert(state, addedToast) {
             const bsToast = new bootstrap.Toast(addedToast);
@@ -120,8 +121,7 @@ export const store = new Vuex.Store({
                         state.socket.emit("message", sendPacket, (ack) => {
                             if(ack.success === "y") {
                                 state.networkStatus = false;
-                            }
-                            else {
+                            } else {
                                 state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "Failed to room out!"});
                             }
                         });
