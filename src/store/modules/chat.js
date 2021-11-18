@@ -15,11 +15,26 @@ const state = {
     chatLogs: [],
     cntLikes: 0,
     alertMsg: [],
-    toastContainer: null,
     bootstrapToasts: [],
+    toastContainer: null,
 }
 
 const getters = {
+    alertMsg(state) {
+        return state.alertMsg;
+    },
+    chatLogs(state) {
+        return state.chatLogs;
+    },
+    cntLikes(state) {
+        return state.cntLikes;
+    },
+    networkStatus(state) {
+        return state.networkStatus;
+    },
+    toastContainer(state) {
+        return state.toastContainer;
+    },
     cntAlertMsg(state) {
         return state.alertMsg.length;
     }
@@ -130,14 +145,10 @@ const mutations = {
     sendLike(state) {
         state.socket.emit("message", { cmd: "sendLike" })
     },
-    enterRoom(state, userInfo) {
-        const { loginId, nickname, avatar } = userInfo;
-        state.loginId = loginId;
-        state.nickname = nickname;
-        state.avatar = avatar;
-
-        if(state.socket.disconnected)
+    sendEnterPacket(state) {
+        if(state.socket.disconnected) {
             state.socket.connect();
+        }
         const packet = {
             cmd: "reqRoomEnter",
             mem_id: state.loginId,
@@ -149,6 +160,23 @@ const mutations = {
                 state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "방 입장 실패!"});
             }
         });
+    },
+    setUserInfo(state, userInfo) {
+        const { loginId, nickname, avatar } = userInfo;
+        state.chatLogs = [];
+        state.cntLikes = 0;
+        state.alertMsg = [];
+        state.bootstrapToasts = [];
+        state.loginId = loginId;
+        state.nickname = nickname;
+        state.avatar = avatar;
+    }
+}
+
+const actions = {
+    enterRoom({ commit, rootGetters }) {
+        commit("setUserInfo", { loginId: rootGetters.loginId, nickname: rootGetters.nickname, avatar: rootGetters.avatar });
+        commit("sendEnterPacket");
     }
 }
 
@@ -156,5 +184,6 @@ export default {
     namespaced: true,
     state,
     getters,
-    mutations
+    mutations,
+    actions
 }

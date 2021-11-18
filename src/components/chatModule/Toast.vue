@@ -16,7 +16,7 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 
-const { mapState, mapGetters } = createNamespacedHelpers("chat");
+const { mapState, mapGetters, mapMutations } = createNamespacedHelpers("chat");
 
 export default {
     data() {
@@ -42,9 +42,9 @@ export default {
         ...mapGetters(["cntAlertMsg"])
     },
     methods: {
-        onCloseToast(index) {
-            this.$store.commit("chat/deleteToast", index);
-        }
+        ...mapMutations({
+            onCloseToast: "deleteToast"
+        })
     }
 }
 </script>

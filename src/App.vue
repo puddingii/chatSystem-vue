@@ -5,11 +5,6 @@
 <script>
 export default {
   name: 'app',
-  data () {
-    return {
-      
-    }
-  },
   created() {
     this.$store.commit("chat/listenSocketEvent");
   }

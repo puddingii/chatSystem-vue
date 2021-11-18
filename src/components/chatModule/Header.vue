@@ -35,7 +35,7 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 
-const { mapState, mapGetters } = createNamespacedHelpers("chat");
+const { mapState, mapGetters, mapMutations } = createNamespacedHelpers("chat");
 
 export default {
     computed: {
@@ -43,15 +43,11 @@ export default {
         ...mapGetters(["cntAlertMsg"])
     },
     methods: {
-        onClickExit() {
-            this.$store.commit("chat/exitRoom");
-        },
-        onClickLike() {
-            this.$store.commit("chat/sendLike");
-        },
-        onClickAlert() {
-            this.$store.commit("chat/showAllAlertMsg");
-        }
+        ...mapMutations({
+            onClickExit: "exitRoom",
+            onClickLike: "sendLike",
+            onClickAlert: "showAllAlertMsg"
+        })
     }
 }
 </script>
