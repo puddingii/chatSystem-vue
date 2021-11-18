@@ -20,6 +20,10 @@ export default {
         ...mapState(["nickname", "avatar"])
     },
     methods: {
+        /**
+         * 메시지를 보낼 때 사용하는 함수로 input값이 없으면 아무것도 하지 않는다.
+         * 메시지를 보냈다면 해당 Input칸은 비워준다.
+         */
         onClickSend() {
             if(this.chatValue === "" || !this.chatValue) {
                 return;

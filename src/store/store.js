@@ -26,6 +26,12 @@ export const store = new Vuex.Store({
         }
     },
     mutations: {
+        /**
+         * 유저정보를 저장한다.
+         * 
+         * @param {object} state 지역 변수를 담고 있는 객체
+         * @param {object} userInfo 유저정보(id, nickname, avatar)
+         */
         initUserInfo(state, userInfo) {
             const { loginId, nickname, avatar } = userInfo;
             state.loginId = loginId;

@@ -32,6 +32,12 @@ export default {
         ...mapState(["chatLogs", "nickname"])
     },
     methods: {
+        /**
+         * 유저 정보에서 닉네임을 가져와서 클래스 이름을 반환하는 함수
+         * 
+         * @param {object} userInfo 유저정보를 담고 있는 객체
+         * @returns {string} 닉네임에 따른 클래스 지정
+         */
         logOwner(userInfo) {
             if(userInfo.nickname === this.nickname) 
                 return "myLog";

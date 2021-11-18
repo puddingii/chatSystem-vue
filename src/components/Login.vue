@@ -32,6 +32,11 @@ export default {
         }
     },
     methods: {
+        /**
+         * 로그인을 하면 유저아이디를 store에 저장하고 채팅방에 참여한다.
+         * 
+         * @param {object} dataInfo 유저정보(id, nickname, avatar)
+         */
         onClickButton(dataInfo) {
             this.$store.commit("initUserInfo", dataInfo);
             this.$store.dispatch("chat/enterRoom");

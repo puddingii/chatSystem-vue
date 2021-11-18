@@ -24,11 +24,13 @@ export default {
             beforeCntToast: 0
         }
     },
-    mounted() {
-        this.$store.commit("chat/initToastContainer", this.$refs.toastContainer);
-    },
+    /**
+     * 컴포넌트가 업데이트 될 때마다 실행하는 함수로 만약 새로운 서버 메시지가 왔다면 오른쪽 아래에 표시해준다.
+     * 지울때도 update가 실행되므로 해당 로직은 업데이트 되기 전의 서버 메시지 수와 업데이트 된 후의 수를 비교해서
+     * 실행이 안되도록 설정.
+     */
     updated() {
-        const toasts = this.toastContainer.querySelectorAll(".toast");
+        const toasts = this.$refs.toastContainer.querySelectorAll(".toast");
         const updatedToastCnt = this.cntAlertMsg;
 
         if(this.beforeCntToast < updatedToastCnt) {
@@ -38,7 +40,7 @@ export default {
         this.beforeCntToast = updatedToastCnt;
     },
     computed: {
-        ...mapState(["alertMsg", "toastContainer"]),
+        ...mapState(["alertMsg"]),
         ...mapGetters(["cntAlertMsg"])
     },
     methods: {
