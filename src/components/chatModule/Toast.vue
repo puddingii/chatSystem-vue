@@ -1,7 +1,7 @@
 <template>
     <div aria-live="polite" aria-atomic="true" class="position-relative">
         <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11" ref="toastContainer">
-            <div v-for="(toast, index) in this.$store.state.alertMsg" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div v-for="(toast, index) in this.alertMsg" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{toast}}
@@ -14,28 +14,36 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+
+const { mapState, mapGetters } = createNamespacedHelpers("chat");
+
 export default {
     data() {
         return {
-            beforeCntToast: this.$store.state.alertMsg.length
+            beforeCntToast: 0
         }
     },
     mounted() {
-        this.$store.commit("initToastContainer", this.$refs.toastContainer);
+        this.$store.commit("chat/initToastContainer", this.$refs.toastContainer);
     },
     updated() {
-        const toasts = this.$store.state.toastContainer.querySelectorAll(".toast");
-        const updatedToastCnt = this.$store.state.alertMsg.length;
+        const toasts = this.toastContainer.querySelectorAll(".toast");
+        const updatedToastCnt = this.cntAlertMsg;
 
         if(this.beforeCntToast < updatedToastCnt) {
             const addedToast = toasts[toasts.length - 1];
-            this.$emit("updatedAlertMsg", addedToast);
-        }
+            this.$store.commit("chat/updateAndShowAlert", addedToast);
+        }            
         this.beforeCntToast = updatedToastCnt;
+    },
+    computed: {
+        ...mapState(["alertMsg", "toastContainer"]),
+        ...mapGetters(["cntAlertMsg"])
     },
     methods: {
         onCloseToast(index) {
-            this.$emit("onCloseToast", index);
+            this.$store.commit("chat/deleteToast", index);
         }
     }
 }

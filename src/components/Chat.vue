@@ -1,11 +1,11 @@
 <template>
     <div class="container">
         <div class="card chatForm">
-            <ChatHeader @onClickAlert="showAllAlertMsg" @onClickLike="sendLike"></ChatHeader>
+            <ChatHeader></ChatHeader>
             <ChatBody></ChatBody>
-            <ChatInput @onClickSend="sendChat"></ChatInput>
+            <ChatInput></ChatInput>
             <ChatFooter></ChatFooter>
-            <ChatToast @onCloseToast="deleteToast" @updatedAlertMsg="updateAndShowAlert"></ChatToast>
+            <ChatToast></ChatToast>
         </div>
     </div>
 </template>
@@ -19,27 +19,6 @@ import ChatToast from "./chatModule/Toast.vue";
 
 export default {
     name: "Chat",
-    methods: {
-        showAllAlertMsg() {
-            this.$store.commit("showAllAlertMsg");
-        },
-        deleteToast(index) {
-            this.$store.commit("deleteToast", index);
-        },
-        sendChat(value) {
-            if(value === "" || !value) {
-                return;
-            }
-            const userInfo = { nickname: this.$store.state.nickname, avatar: this.$store.state.avatar, value };
-            this.$store.commit("sendMsg", userInfo);
-        },
-        sendLike() {
-            this.$store.commit("sendLike");
-        },
-        updateAndShowAlert(addedToast) {
-            this.$store.commit("updateAndShowAlert", addedToast);
-        }
-    },
     components: {
         ChatHeader,
         ChatBody,

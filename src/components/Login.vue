@@ -33,7 +33,7 @@ export default {
     },
     methods: {
         onClickButton(dataInfo) {
-            this.$store.commit("enterRoom", dataInfo);
+            this.$store.commit("chat/enterRoom", dataInfo);
         }
     }
 }

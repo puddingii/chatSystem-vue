@@ -6,13 +6,13 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         네트워크 상태
-                        <span class="badge bg-primary rounded-pill">{{ this.$store.state.networkStatus ? "On" : "Off" }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ this.networkStatus ? "On" : "Off" }}</span>
                     </div>
                     <div>
                         <button class="btn btn-outline-primary position-relative likeBtn" @click="onClickLike">
                             👍
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
-                                {{ this.$store.state.cntLikes }}
+                                {{ this.cntLikes }}
                                 <span class="visually-hidden">Likes</span>
                             </span>
                         </button>
@@ -21,7 +21,7 @@
                         data-bs-trigger="hover focus" @click="onClickAlert">
                             ✉️
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
-                                {{ this.$store.state.alertMsg.length }}
+                                {{ this.cntAlertMsg }}
                                 <span class="visually-hidden">Likes</span>
                             </span>
                         </button>
@@ -33,16 +33,24 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+
+const { mapState, mapGetters } = createNamespacedHelpers("chat");
+
 export default {
+    computed: {
+        ...mapState(["cntLikes", "networkStatus"]),
+        ...mapGetters(["cntAlertMsg"])
+    },
     methods: {
         onClickExit() {
-            this.$store.commit("exitRoom");
+            this.$store.commit("chat/exitRoom");
         },
         onClickLike() {
-            this.$emit("onClickLike");
+            this.$store.commit("chat/sendLike");
         },
         onClickAlert() {
-            this.$emit("onClickAlert");
+            this.$store.commit("chat/showAllAlertMsg");
         }
     }
 }

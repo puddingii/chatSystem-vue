@@ -11,7 +11,7 @@ export default {
     }
   },
   created() {
-    this.$store.commit("listenSocketEvent");
+    this.$store.commit("chat/listenSocketEvent");
   }
 }
 </script>

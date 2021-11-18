@@ -1,7 +1,7 @@
 <template>
     <div ref="chatBoard" class="card-body chatBoard">
         <ul class="chatBoardUl">
-            <li :class="logOwner(log)" v-for="(log, index) in this.$store.state.chatLogs" :key="index" class="chatLogForm">
+            <li :class="logOwner(log)" v-for="(log, index) in this.chatLogs" :key="index" class="chatLogForm">
                 <div v-if="logOwner(log) === 'myLog'" class="logForm">
                     <div class="myLogBorder border rounded">{{log.value}}</div>
                 </div>
@@ -20,13 +20,20 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+
+const { mapState } = createNamespacedHelpers("chat");
+
 export default {
     updated() {
         this.$refs.chatBoard.scrollTop = this.$refs.chatBoard.scrollHeight - this.$refs.chatBoard.clientHeight;
     },
+    computed: {
+        ...mapState(["chatLogs", "nickname"])
+    },
     methods: {
         logOwner(userInfo) {
-            if(userInfo.nickname === this.$store.state.nickname) 
+            if(userInfo.nickname === this.nickname) 
                 return "myLog";
             else if(userInfo.nickname === "SYSTEM")
                 return "systemLog";
