@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="card chatForm">
-            <ChatHeader @onClickAlert="showAllAlertMsg" @onClickLike="sendLike" @onClickExit="exitRoom"></ChatHeader>
+            <ChatHeader @onClickAlert="showAllAlertMsg" @onClickLike="sendLike"></ChatHeader>
             <ChatBody></ChatBody>
             <ChatInput @onClickSend="sendChat"></ChatInput>
             <ChatFooter></ChatFooter>
@@ -19,15 +19,7 @@ import ChatToast from "./chatModule/Toast.vue";
 
 export default {
     name: "Chat",
-    data() {
-        return {
-        }
-    },
     methods: {
-        exitRoom() {
-            this.$store.commit("exitRoom");
-            this.$router.push("/login");
-        },
         showAllAlertMsg() {
             this.$store.commit("showAllAlertMsg");
         },

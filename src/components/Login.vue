@@ -1,6 +1,6 @@
 <template>
     <main class="form-signin">
-        <form @submit.prevent="onClickButton({ loginId, nickname, avatar })">
+        <div>
             <h1 class="h3 mb-3 fw-normal">Login</h1>
             <h3 class="mb-3 errorMsg"></h3>
             <div class="form-floating">
@@ -14,10 +14,9 @@
             <div class="form-floating">
                 <input class="form-control" id="floatingAvatar" type="text" name="avatarLink" placeholder="Avatar Link" v-model="avatar" />
                 <label for="floatingAvatar">Avatar</label>
-                
             </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Join</button>
-        </form>
+            <router-link to="/" @click.native="onClickButton({ loginId, nickname, avatar })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
+        </div>
         <p class="mt-5 mb-3 text-muted">&copy; GeonYeong</p>
     </main>
 </template>
@@ -34,8 +33,7 @@ export default {
     },
     methods: {
         onClickButton(dataInfo) {
-            this.$store.commit("onJoinButton", dataInfo);
-            this.$router.push("/");
+            this.$store.commit("enterRoom", dataInfo);
         }
     }
 }

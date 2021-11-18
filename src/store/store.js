@@ -63,6 +63,7 @@ export const store = new Vuex.Store({
             state.bootstrapToasts[index].hide();
         },
         exitRoom(state) {
+            state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "안녕히 가세요!"});
             state.socket.disconnect();
         },
         listenSocketEvent(state) {
@@ -134,7 +135,7 @@ export const store = new Vuex.Store({
         sendLike(state) {
             state.socket.emit("message", { cmd: "sendLike" })
         },
-        onJoinButton(state, userInfo) {
+        enterRoom(state, userInfo) {
             const { loginId, nickname, avatar } = userInfo;
             state.loginId = loginId;
             state.nickname = nickname;

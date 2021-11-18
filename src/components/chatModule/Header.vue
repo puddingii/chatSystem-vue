@@ -1,7 +1,7 @@
 <template>
     <div class="card-header">
         <div class="row">
-            <button @click="onClickExit" class="btn btn-danger col-2">퇴장</button>
+            <router-link @click.native="onClickExit" to="login" tag="button" class="btn btn-danger col-2">퇴장</router-link>
             <ul class="list-group col-10 netStatus">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -36,7 +36,7 @@
 export default {
     methods: {
         onClickExit() {
-            this.$emit("onClickExit");
+            this.$store.commit("exitRoom");
         },
         onClickLike() {
             this.$emit("onClickLike");

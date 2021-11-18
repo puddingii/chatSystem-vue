@@ -21,10 +21,6 @@
 
 <script>
 export default {
-    data() {
-        return {
-        }
-    },
     updated() {
         this.$refs.chatBoard.scrollTop = this.$refs.chatBoard.scrollHeight - this.$refs.chatBoard.clientHeight;
     },
