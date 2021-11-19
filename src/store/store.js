@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import "regenerator-runtime";
 
 import chat from "./modules/chat";
+import { saveUserInfo, getUserInfo } from "./modules/common/storage";
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -33,10 +34,24 @@ export const store = new Vuex.Store({
          * @param {object} userInfo 유저정보(id, nickname, avatar)
          */
         initUserInfo(state, userInfo) {
-            const { loginId, nickname, avatar } = userInfo;
+            const { loginId, nickname, avatar, chkRemember } = userInfo;
             state.loginId = loginId;
             state.nickname = nickname;
             state.avatar = avatar;
+            if(chkRemember) {
+                saveUserInfo(userInfo);
+            } else {
+                saveUserInfo();
+            }
+        },
+        loadUserInfo(state) {
+            const userInfo = getUserInfo();
+            if(userInfo.chkRemember) {
+                const { loginId, nickname, avatar } = userInfo;
+                state.loginId = loginId;
+                state.nickname = nickname;
+                state.avatar = avatar;
+            }
         }
     }
 })

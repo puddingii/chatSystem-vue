@@ -76,6 +76,7 @@ export default {
 }
 
 .myLog {
+    text-align: right;
     display: flex;
     justify-content: right;
 }

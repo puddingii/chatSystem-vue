@@ -84,7 +84,7 @@ const mutations = {
      * @param {object} state 지역 변수를 담고 있는 객체
      * @param {number} index 가리고 싶은 메시지의 위치(배열 위치)
      */
-    deleteToast(state, index) {
+    hideToast(state, index) {
         const findIndex = state.showingToastIndexArr.findIndex(element => element === index);
         state.showingToastIndexArr.splice(findIndex, 1);
         state.bootstrapToasts[index].hide();

@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import ChatHeader from "./chatModule/Header.vue";
-import ChatBody from "./chatModule/Body.vue";
-import ChatInput from "./chatModule/Input.vue";
-import ChatFooter from "./chatModule/Footer.vue";
-import ChatToast from "./chatModule/Toast.vue";
+import ChatHeader from "./ChatComponents/Header.vue";
+import ChatBody from "./ChatComponents/Body.vue";
+import ChatInput from "./ChatComponents/Input.vue";
+import ChatFooter from "./ChatComponents/Footer.vue";
+import ChatToast from "./ChatComponents/Toast.vue";
 
 export default {
     name: "Chat",

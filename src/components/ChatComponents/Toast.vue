@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         ...mapMutations({
-            onCloseToast: "deleteToast"
+            onCloseToast: "hideToast"
         })
     }
 }
