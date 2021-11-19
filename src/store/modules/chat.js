@@ -2,7 +2,7 @@
 import ENV from "../../config";
 
 const SYSTEM_ID = "SYSTEM";
-const MAX_VIEW_CNT = 12;
+const MAX_VIEW_CNT = 5;
 
 const state = {
     loginId: "",
@@ -16,7 +16,8 @@ const state = {
     chatLogs: [],
     cntLikes: 0,
     alertMsg: [],
-    bootstrapToasts: []
+    bootstrapToasts: [],
+    showingToastIndexArr: []
 }
 
 const getters = {
@@ -70,10 +71,10 @@ const mutations = {
     updateAndShowAlert(state, addedToast) {
         const bsToast = new bootstrap.Toast(addedToast);
         state.bootstrapToasts.push(bsToast);
-
-        if(state.bootstrapToasts.length > MAX_VIEW_CNT) {
-            for(let i = 0; i < state.bootstrapToasts.length - MAX_VIEW_CNT; i++)
-                state.bootstrapToasts[i].hide();
+        if(state.showingToastIndexArr.length > MAX_VIEW_CNT) {
+            const oldToastIndex = state.showingToastIndexArr[0];
+            state.showingToastIndexArr.splice(0, 1);
+            state.bootstrapToasts[oldToastIndex].hide();
         }
         bsToast.show();
     },
@@ -84,6 +85,8 @@ const mutations = {
      * @param {number} index 가리고 싶은 메시지의 위치(배열 위치)
      */
     deleteToast(state, index) {
+        const findIndex = state.showingToastIndexArr.findIndex(element => element === index);
+        state.showingToastIndexArr.splice(findIndex, 1);
         state.bootstrapToasts[index].hide();
     },
     /**
@@ -158,6 +161,7 @@ const mutations = {
                     break;
                 case "rcvAlertMsg": {
                     const { msg } = packet;
+                    state.showingToastIndexArr.push(state.alertMsg.length);
                     state.alertMsg.push(msg);
                     break;
                 }

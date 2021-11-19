@@ -4,7 +4,7 @@
             <ChatHeader></ChatHeader>
             <ChatBody></ChatBody>
             <ChatInput></ChatInput>
-            <ChatFooter></ChatFooter>
+            <ChatFooter/>
             <ChatToast></ChatToast>
         </div>
     </div>

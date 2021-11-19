@@ -13,7 +13,6 @@
                         <div class="anotherChatLog border rounded logForm">{{log.value}}</div>
                     </div>
                 </div>
-                
             </li>
         </ul>
     </div>
@@ -50,7 +49,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .chatBoard {
     overflow-y: scroll;
     padding-left: 5px;
@@ -64,11 +63,6 @@ export default {
 .avatarImg {
     width: 20px;
     height: 20px;
-}
-
-li {
-    list-style-type: none;
-    text-align: left;
 }
 
 .logForm {
@@ -91,11 +85,13 @@ li {
 }
 
 .anotherUserLog {
+    text-align: left;
     max-width: 230px;
 }
 
 .chatLogForm {
     margin-bottom: 10px;
+    list-style-type: none;
 }
 
 .rounded {

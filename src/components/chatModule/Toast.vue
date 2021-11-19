@@ -50,3 +50,10 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.toast-body {
+    word-break: break-all;
+    text-align: left;
+}
+</style>
