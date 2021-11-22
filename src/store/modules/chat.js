@@ -40,43 +40,13 @@ const getters = {
 
 const mutations = {
     /**
-     * 이때까지 받았던 모든 Alert메시지를 보여준다. 다 보여져있는 상태라면 모두 다 닫고, 만약 일부만 닫힌
-     * 상태라면 닫힌 메시지들을 전부 보여주게끔 한다.
+     * 채팅방에서 나가기 위한 함수다.
      * 
      * @param {object} state 지역 변수를 담고 있는 객체
      */
-    showAllAlertMsg(state) {
-        let isAllShowed = true;
-        for(let i = 0; i < state.bootstrapToasts.length; i++) {
-            const toastClass = state.bootstrapToasts[i]._element.classList;
-            if(!toastClass.contains("show")) {
-                state.bootstrapToasts[i].show();
-                isAllShowed = false;
-            }
-        }
-        if(isAllShowed) {
-            state.bootstrapToasts.forEach((toast) => {
-                toast.hide();
-            });
-        }
-    },
-    /**
-     * Alert메시지가 도착하면 오른쪽 아래에 메시지를 보여주는 함수
-     * 만약 열려있는 메시지가 12개 이상이라면 제일 오래된 메시지를 지우고
-     * 새 메시지를 보여준다.
-     * 
-     * @param {object} state 지역 변수를 담고 있는 객체
-     * @param {Element} addedToast 추가할 alert 메시지
-     */
-    updateAndShowAlert(state, addedToast) {
-        const bsToast = new bootstrap.Toast(addedToast);
-        state.bootstrapToasts.push(bsToast);
-        if(state.showingToastIndexArr.length > MAX_VIEW_CNT) {
-            const oldToastIndex = state.showingToastIndexArr[0];
-            state.showingToastIndexArr.splice(0, 1);
-            state.bootstrapToasts[oldToastIndex].hide();
-        }
-        bsToast.show();
+    exitRoom(state) {
+        state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "안녕히 가세요!"});
+        state.socket.disconnect();
     },
     /**
      * Alert 메시지를 숨기는 함수
@@ -90,13 +60,20 @@ const mutations = {
         state.bootstrapToasts[index].hide();
     },
     /**
-     * 채팅방에서 나가기 위한 함수다.
+     * 유저정보를 state 객체에 저장하고, 다른 변수들을 초기화 시킨다.
      * 
      * @param {object} state 지역 변수를 담고 있는 객체
+     * @param {object} userInfo 유저정보를 담고 있는 객체
      */
-    exitRoom(state) {
-        state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "안녕히 가세요!"});
-        state.socket.disconnect();
+    initRoomInfo(state, userInfo) {
+        const { loginId, nickname, avatar } = userInfo;
+        state.chatLogs = [];
+        state.cntLikes = 0;
+        state.alertMsg = [];
+        state.bootstrapToasts = [];
+        state.loginId = loginId;
+        state.nickname = nickname;
+        state.avatar = avatar;
     },
     /**
      * 서버에서 오는 각종 메시지들을 읽고 처리하는 함수
@@ -169,6 +146,27 @@ const mutations = {
         });
     },
     /**
+     * 이때까지 받았던 모든 Alert메시지를 보여준다. 다 보여져있는 상태라면 모두 다 닫고, 만약 일부만 닫힌
+     * 상태라면 닫힌 메시지들을 전부 보여주게끔 한다.
+     * 
+     * @param {object} state 지역 변수를 담고 있는 객체
+     */
+    showAllAlertMsg(state) {
+        let isAllShowed = true;
+        for(let i = 0; i < state.bootstrapToasts.length; i++) {
+            const toastClass = state.bootstrapToasts[i]._element.classList;
+            if(!toastClass.contains("show")) {
+                state.bootstrapToasts[i].show();
+                isAllShowed = false;
+            }
+        }
+        if(isAllShowed) {
+            state.bootstrapToasts.forEach((toast) => {
+                toast.hide();
+            });
+        }
+    },
+    /**
      * 메시지를 보낼 때 사용하는 함수로 서버에 패킷을 보내고
      * 채팅로그에 남기기 위해 배열에 Push하는 함수
      * 
@@ -214,21 +212,23 @@ const mutations = {
         });
     },
     /**
-     * 유저정보를 state 객체에 저장하고, 다른 변수들을 초기화 시킨다.
+     * Alert메시지가 도착하면 오른쪽 아래에 메시지를 보여주는 함수
+     * 만약 열려있는 메시지가 12개 이상이라면 제일 오래된 메시지를 지우고
+     * 새 메시지를 보여준다.
      * 
      * @param {object} state 지역 변수를 담고 있는 객체
-     * @param {object} userInfo 유저정보를 담고 있는 객체
+     * @param {Element} addedToast 추가할 alert 메시지
      */
-    initRoomInfo(state, userInfo) {
-        const { loginId, nickname, avatar } = userInfo;
-        state.chatLogs = [];
-        state.cntLikes = 0;
-        state.alertMsg = [];
-        state.bootstrapToasts = [];
-        state.loginId = loginId;
-        state.nickname = nickname;
-        state.avatar = avatar;
-    }
+    updateAndShowAlert(state, addedToast) {
+        const bsToast = new bootstrap.Toast(addedToast);
+        state.bootstrapToasts.push(bsToast);
+        if(state.showingToastIndexArr.length > MAX_VIEW_CNT) {
+            const oldToastIndex = state.showingToastIndexArr[0];
+            state.showingToastIndexArr.splice(0, 1);
+            state.bootstrapToasts[oldToastIndex].hide();
+        }
+        bsToast.show();
+    },
 }
 
 const actions = {

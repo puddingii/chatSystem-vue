@@ -21,7 +21,7 @@
                     <input v-model="chkRemember" type="checkbox"> Remember Later
                 </label>
             </div>
-            <router-link tag="button" to="/" @click.native="onClickButton({ loginId, nickname, avatar, chkRemember })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
+            <router-link tag="button" to="/" @click.native="onClickJoin({ loginId, nickname, avatar, chkRemember })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
         </div>
         <p class="mt-5 mb-3 text-muted">&copy; GeonYeong</p>
     </main>
@@ -39,7 +39,7 @@ export default {
         }
     },
     beforeCreate() {
-        this.$store.commit("loadUserInfo");
+        this.$store.dispatch("login/loadAndSaveUserInfo");
     },
     methods: {
         /**
@@ -47,8 +47,9 @@ export default {
          * 
          * @param {object} dataInfo 유저정보(id, nickname, avatar)
          */
-        onClickButton(dataInfo) {
+        onClickJoin(dataInfo) {
             this.$store.commit("initUserInfo", dataInfo);
+            this.$store.commit("saveUserInfo", dataInfo);
             this.$store.dispatch("chat/enterRoom");
         }
     }
