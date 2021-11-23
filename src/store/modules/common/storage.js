@@ -1,5 +1,8 @@
 export const getUserInfo = () => {
-    const userInfo = localStorage.getItem("userInfo");
+    let userInfo = localStorage.getItem("userInfo");
+    if(!userInfo) {
+        userInfo = { loginId: false };
+    }
     return JSON.parse(userInfo);
 };
 
