@@ -107,10 +107,11 @@ const mutations = {
                         });
                     }
                     break;
+                case "rcvToastMsg":
                 case "rcvSystemMsg": {
                     const splitMsg = packet.msg.split(" ");
-                    const isMyEnterMsg = splitMsg[0] === state.nickname && splitMsg[3] === "입장하였습니다.";
-                    if(!isMyEnterMsg) {
+                    const isNotMyMsg = !(splitMsg[0] === state.nickname && splitMsg[3] === "입장하였습니다.");
+                    if(isNotMyMsg) {
                         state.chatLogs.push({
                             nickname: SYSTEM_ID,
                             avatar: false,
