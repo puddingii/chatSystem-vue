@@ -21,7 +21,7 @@
                     <input v-model="chkRemember" type="checkbox"> Remember Later
                 </label>
             </div>
-            <router-link tag="button" to="/" @click.native="onClickJoin({ loginId, nickname, avatar, chkRemember })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
+            <router-link tag="button" to="/" @click.native="handleJoinClick({ loginId, nickname, avatar, chkRemember })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
         </div>
         <p class="mt-5 mb-3 text-muted">&copy; GeonYeong</p>
     </main>
@@ -32,14 +32,21 @@ export default {
     name: "Login",
     data() {
         return {
-            loginId: this.$store.state.loginId,
-            nickname: this.$store.state.nickname,
-            avatar: this.$store.state.avatar,
+            loginId: "",
+            nickname: "",
+            avatar: "",
             chkRemember: false
         }
     },
-    beforeCreate() {
-        this.$store.dispatch("login/loadAndSaveUserInfo");
+    async beforeCreate() {
+        // 사용자 정보가 저장되어 있는 상태라면 처음 로그인 창 Input에 불러온다.
+        await this.$store.dispatch("login/loadAndInitUserInfo");
+        this.loginId = this.$store.state.loginId;
+        this.nickname = this.$store.state.nickname;
+        this.avatar = this.$store.state.avatar;
+        if(this.$store.state.loginId) {
+            this.chkRemember = true;
+        }
     },
     methods: {
         /**
@@ -47,9 +54,9 @@ export default {
          * 
          * @param {object} dataInfo 유저정보(id, nickname, avatar)
          */
-        onClickJoin(dataInfo) {
+        handleJoinClick(dataInfo) {
             this.$store.commit("initUserInfo", dataInfo);
-            this.$store.commit("saveUserInfo", dataInfo);
+            this.$store.dispatch("login/checkAndSaveUserInfo", dataInfo);
             this.$store.dispatch("chat/enterRoom");
         }
     }

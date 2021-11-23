@@ -4,7 +4,6 @@ import "regenerator-runtime";
 
 import chat from "./modules/chat";
 import login from "./modules/login";
-import { saveUserInfo } from "./modules/common/storage";
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -35,18 +34,11 @@ export const store = new Vuex.Store({
          * @param {object} state 지역 변수를 담고 있는 객체
          * @param {object} userInfo 유저정보(id, nickname, avatar)
          */
-        initUserInfo(state, userInfo) {
+        initUserInfo(state, userInfo = { loginId: "", nickname: "", avatar: "" }) {
             const { loginId, nickname, avatar } = userInfo;
             state.loginId = loginId;
             state.nickname = nickname;
             state.avatar = avatar;
-        },
-        saveUserInfo(state, userInfo) {
-            if(userInfo.chkRemember) {
-                saveUserInfo(userInfo);
-            } else {
-                saveUserInfo();
-            }
         }
     }
 })

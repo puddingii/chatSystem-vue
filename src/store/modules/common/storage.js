@@ -3,7 +3,7 @@ export const getUserInfo = () => {
     return JSON.parse(userInfo);
 };
 
-export const saveUserInfo = (userInfo = { chkRemember: false }) => {
+export const saveUserInfo = (userInfo = { loginId: false }) => {
     const toString = JSON.stringify(userInfo);
     localStorage.setItem("userInfo", toString);
 }
