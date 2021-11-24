@@ -1,12 +1,12 @@
 <template>
     <div aria-live="polite" aria-atomic="true" class="position-relative">
         <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11" ref="toastContainer">
-            <div v-for="(toast, index) in this.alertMsg" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div v-for="(toast, index) in this.alertMessages" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{toast}}
                     </div>
-                    <button @click="onCloseToast(index)" type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button @click="handleCloseClick(index)" type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@ const { mapState, mapGetters, mapMutations } = createNamespacedHelpers("chat");
 export default {
     data() {
         return {
-            beforeCntToast: 0
+            beforeToastCount: 0
         }
     },
     /**
@@ -31,21 +31,21 @@ export default {
      */
     updated() {
         const toasts = this.$refs.toastContainer.querySelectorAll(".toast");
-        const updatedToastCnt = this.cntAlertMsg;
+        const updatedToastCount = this.alertMessageCount;
 
-        if(this.beforeCntToast < updatedToastCnt) {
+        if(this.beforeToastCount < updatedToastCount) {
             const addedToast = toasts[toasts.length - 1];
             this.$store.commit("chat/updateAndShowAlert", addedToast);
-        }            
-        this.beforeCntToast = updatedToastCnt;
+        }
+        this.beforeToastCount = updatedToastCount;
     },
     computed: {
-        ...mapState(["alertMsg"]),
-        ...mapGetters(["cntAlertMsg"])
+        ...mapState(["alertMessages"]),
+        ...mapGetters(["alertMessageCount"])
     },
     methods: {
         ...mapMutations({
-            onCloseToast: "hideToast"
+            handleCloseClick: "hideToast"
         })
     }
 }

@@ -2,26 +2,26 @@
     <main class="form-signin">
         <div>
             <img class="mb-4 border rounded-circle" alt="Your Avatar Image" :src="avatar" width="72" height="72">
-            <h1 class="h3 mb-3 fw-normal">Login</h1>
+            <h1 class="h3 mb-3 fw-normal">로그인</h1>
             <h3 class="mb-3 errorMsg"></h3>
             <div class="form-floating">
                 <input class="form-control" id="floatingId" type="text" name="loginId" placeholder="Login Id" v-model="loginId" />
-                <label for="floatingId">Id</label>
+                <label for="floatingId">아이디</label>
             </div>
             <div class="form-floating">
                 <input class="form-control" id="floatingNick" type="text" name="nickname" placeholder="Nickname" v-model="nickname" />
-                <label for="floatingNick">Nickname</label>
+                <label for="floatingNick">닉네임</label>
             </div>
             <div class="form-floating">
                 <input class="form-control" id="floatingAvatar" type="text" name="avatarLink" placeholder="Avatar Link" v-model="avatar" />
-                <label for="floatingAvatar">Avatar</label>
+                <label for="floatingAvatar">아바타 URL</label>
             </div>
             <div class="checkbox mb-3">
                 <label>
-                    <input v-model="chkRemember" type="checkbox"> Remember Later
+                    <input v-model="isRemembered" type="checkbox"> 유저 기억하기
                 </label>
             </div>
-            <router-link tag="button" to="/" @click.native="handleJoinClick({ loginId, nickname, avatar, chkRemember })" class="w-100 btn btn-lg btn-primary" type="button">Join</router-link>
+            <router-link tag="button" to="/" @click.native="handleJoinClick({ loginId, nickname, avatar, isRemembered })" class="w-100 btn btn-lg btn-primary" type="button">참여하기</router-link>
         </div>
         <p class="mt-5 mb-3 text-muted">&copy; GeonYeong</p>
     </main>
@@ -35,7 +35,7 @@ export default {
             loginId: "",
             nickname: "",
             avatar: "",
-            chkRemember: false
+            isRemembered: false
         }
     },
     async beforeCreate() {
@@ -45,13 +45,13 @@ export default {
         this.nickname = this.$store.state.nickname;
         this.avatar = this.$store.state.avatar;
         if(this.$store.state.loginId) {
-            this.chkRemember = true;
+            this.isRemembered = true;
         }
     },
     methods: {
         /**
          * 로그인을 하면 유저아이디를 store에 저장하고 채팅방에 참여한다.
-         * 
+         *
          * @param {object} dataInfo 유저정보(id, nickname, avatar)
          */
         handleJoinClick(dataInfo) {
