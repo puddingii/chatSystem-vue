@@ -21,7 +21,7 @@
                         data-bs-trigger="hover focus" @click="handleAlertClick">
                             ✉️
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" >
-                                {{ this.alertMessageCount }}
+                                {{ this.toastCount }}
                                 <span class="visually-hidden">Likes</span>
                             </span>
                         </button>
@@ -40,13 +40,13 @@ const { mapState, mapGetters, mapMutations } = createNamespacedHelpers("chat");
 export default {
     computed: {
         ...mapState(["likeCount", "isNetworkConnected"]),
-        ...mapGetters(["alertMessageCount"])
+        ...mapGetters(["toastCount"])
     },
     methods: {
         ...mapMutations({
             handleExitClick: "exitRoom",
             handleLikeClick: "sendLike",
-            handleAlertClick: "showAllAlertMessagess"
+            handleAlertClick: "showAllToasts"
         })
     }
 }

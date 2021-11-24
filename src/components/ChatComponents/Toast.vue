@@ -1,7 +1,7 @@
 <template>
     <div aria-live="polite" aria-atomic="true" class="position-relative">
         <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11" ref="toastContainer">
-            <div v-for="(toast, index) in this.alertMessages" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div v-for="(toast, index) in this.toastList" :key="index" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{toast}}
@@ -30,18 +30,18 @@ export default {
      * 실행이 안되도록 설정.
      */
     updated() {
-        const toasts = this.$refs.toastContainer.querySelectorAll(".toast");
-        const updatedToastCount = this.alertMessageCount;
+        const toastList = this.$refs.toastContainer.querySelectorAll(".toast");
+        const updatedToastCount = this.toastCount;
 
         if(this.beforeToastCount < updatedToastCount) {
-            const addedToast = toasts[toasts.length - 1];
+            const addedToast = toastList[toastList.length - 1];
             this.$store.commit("chat/updateAndShowAlert", addedToast);
         }
         this.beforeToastCount = updatedToastCount;
     },
     computed: {
-        ...mapState(["alertMessages"]),
-        ...mapGetters(["alertMessageCount"])
+        ...mapState(["toastList"]),
+        ...mapGetters(["toastCount"])
     },
     methods: {
         ...mapMutations({

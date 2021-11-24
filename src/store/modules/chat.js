@@ -1,8 +1,19 @@
 /*global io, bootstrap */
+import Swal from "sweetalert2";
 import ENV from "../../config";
 
 const SYSTEM_ID = "SYSTEM";
-const MAX_VIEW_CNT = 5;
+const MAX_VIEW_COUNT = 5;
+let MY_ENTER_FLAG = false;
+
+/**
+ * 채팅내용을 보여주기 위한 log 추가 작업
+ *
+ * @param {{loginId: string, nickname: string, avatar: string, value: string}} logInfo 추가할 채팅 내용정보
+ */
+const addChatLogs = (logInfo) => {
+    state.chatLogs.push(logInfo);
+};
 
 const state = {
     loginId: "",
@@ -16,15 +27,15 @@ const state = {
     isNetworkConnected: false,
     chatLogs: new Array(),
     likeCount: 0,
-    alertMessages: new Array(),
-    bootstrapToasts: new Array(),
-    showingToastIndexArr: new Array()
+    toastList: new Array(),
+    bootstrapToastList: new Array(),
+    showingToastList: new Array()
 }
 
 /** @type {import ('vuex').GetterTree<typeof state>} */
 const getters = {
-    alertMessages(state) {
-        return state.alertMessages;
+    toastList(state) {
+        return state.toastList;
     },
     chatLogs(state) {
         return state.chatLogs;
@@ -35,15 +46,15 @@ const getters = {
     isNetworkConnected(state) {
         return state.isNetworkConnected;
     },
-    alertMessageCount(state) {
-        return state.alertMessages.length;
+    toastCount(state) {
+        return state.toastList.length;
     }
 }
 
 /** @type {import ('vuex').MutationTree<typeof state>} */
 const mutations = {
     exitRoom(state) {
-        state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "안녕히 가세요!"});
+        addChatLogs({ loginId: SYSTEM_ID, nickname: SYSTEM_ID, avatar: "", value: "안녕히 가세요!"});
         state.socket.disconnect();
     },
     /**
@@ -52,9 +63,9 @@ const mutations = {
      * @param {number} index 가리고 싶은 메시지의 위치(배열 위치)
      */
     hideToast(state, index) {
-        const findIndex = state.showingToastIndexArr.findIndex(element => element === index);
-        state.showingToastIndexArr.splice(findIndex, 1);
-        state.bootstrapToasts[index].hide();
+        const findIndex = state.showingToastList.findIndex(element => element === index);
+        state.showingToastList.splice(findIndex, 1);
+        state.bootstrapToastList[index].hide();
     },
     /**
      * 유저정보를 state 객체에 저장하고, 다른 변수들을 초기화 시킨다.
@@ -65,8 +76,8 @@ const mutations = {
         const { loginId, nickname, avatar } = userInfo;
         state.chatLogs = [];
         state.likeCount = 0;
-        state.alertMessages = [];
-        state.bootstrapToasts = [];
+        state.toastList = [];
+        state.bootstrapToastList = [];
         state.loginId = loginId;
         state.nickname = nickname;
         state.avatar = avatar;
@@ -87,30 +98,43 @@ const mutations = {
             }
         });
         state.socket.on("error", (err) => {
-            state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
+            addChatLogs({ loginId: SYSTEM_ID, nickname: SYSTEM_ID, avatar: "", value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
         });
         state.socket.on("message", (packet) => {
             console.log(packet);
             switch(packet.cmd) {
                 case ENV.RECEIVE_CHAT_MESSAGE:
-                    if(packet.from.chat_name !== state.nickname) {
-                        state.chatLogs.push({
-                            nickname: packet.from.chat_name,
-                            avatar: packet.from.mem_photo,
+                    if(packet.from.mem_id !== state.loginId) {
+                        addChatLogs({
+                          loginId: packet.from.mem_id,
+                          nickname: packet.from.chat_name,
+                          avatar: packet.from.mem_photo,
+                          value: packet.msg
+                      });
+                    }
+                    break;
+                case ENV.RECEIVE_TOAST_MESSAGE: {
+                    const { msg } = packet;
+                    state.showingToastList.push(state.toastList.length);
+                    state.toastList.push(msg);
+                    break;
+                }
+                case ENV.RECEIVE_SYSTEM_MESSAGE: {
+                    let isMyEnterMessage;
+                    if(MY_ENTER_FLAG) {
+                        MY_ENTER_FLAG = false;
+                        break;
+                    }
+                    if(!isMyEnterMessage) {
+                        addChatLogs({
+                            loginId: SYSTEM_ID,
+                            nickname: SYSTEM_ID,
+                            avatar: "",
                             value: packet.msg
                         });
                     }
-                    break;
-                case ENV.RECEIVE_TOAST_MESSAGE:
-                case ENV.RECEIVE_SYSTEM_MESSAGE: {
-                    const splitMsg = packet.msg.split(" ");
-                    const isNotMyMsg = !(splitMsg[0] === state.nickname && splitMsg[3] === "입장하였습니다.");
-                    if(isNotMyMsg) {
-                        state.chatLogs.push({
-                            nickname: SYSTEM_ID,
-                            avatar: false,
-                            value: packet.msg
-                        });
+                    if(state.chatLogs.length === 1) {
+                        MY_ENTER_FLAG = true;
                     }
                     break;
                 }
@@ -119,12 +143,14 @@ const mutations = {
                         cmd: ENV.SEND_ROOM_OUT
                     };
                     state.socket.emit("message", sendPacket, (ack) => {
+                        const log = { loginId: SYSTEM_ID, nickname: SYSTEM_ID, avatar: "", value: "" };
                         if(ack.success === "y") {
                             state.isNetworkConnected = false;
-                            state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "연결 강제해제. 퇴장 후 다시 입장하세요"});
+                            log.value = "연결 강제해제. 퇴장 후 다시 입장하세요";
                         } else {
-                            state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "연결해제 에러!"});
+                            log.value = "연결해제 에러!";
                         }
+                        addChatLogs(log);
                     });
                     break;
                 }
@@ -133,8 +159,22 @@ const mutations = {
                     break;
                 case ENV.RECEIVE_ALERT_MESSAGE: {
                     const { msg } = packet;
-                    state.showingToastIndexArr.push(state.alertMessages.length);
-                    state.alertMessages.push(msg);
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.addEventListener('mouseenter', Swal.stopTimer)
+                          toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+
+                    Toast.fire({
+                        icon: 'info',
+                        title: msg
+                    })
                     break;
                 }
             }
@@ -144,17 +184,17 @@ const mutations = {
      * 이때까지 받았던 모든 Alert메시지를 보여준다. 다 보여져있는 상태라면 모두 다 닫고, 만약 일부만 닫힌
      * 상태라면 닫힌 메시지들을 전부 보여주게끔 한다.
      */
-    showAllAlertMessagess(state) {
+    showAllToasts(state) {
         let isAllShowed = true;
-        for(let i = 0; i < state.bootstrapToasts.length; i++) {
-            const toastClass = state.bootstrapToasts[i]._element.classList;
+        for(let i = 0; i < state.bootstrapToastList.length; i++) {
+            const toastClass = state.bootstrapToastList[i]._element.classList;
             if(!toastClass.contains("show")) {
-                state.bootstrapToasts[i].show();
+                state.bootstrapToastList[i].show();
                 isAllShowed = false;
             }
         }
         if(isAllShowed) {
-            state.bootstrapToasts.forEach((toast) => {
+            state.bootstrapToastList.forEach((toast) => {
                 toast.hide();
             });
         }
@@ -163,15 +203,21 @@ const mutations = {
      * 메시지를 보낼 때 사용하는 함수로 서버에 패킷을 보내고
      * 채팅로그에 남기기 위해 배열에 Push하는 함수
      *
-     * @param {{nickname: string, avatar: string, value: string}} userInfo 유저정보를 담고 있는 객체
+     * @param {string} inputValue 유저정보를 담고 있는 객체
      */
-    sendMessage(state, userInfo) {
+    sendMessage(state, inputValue) {
+        const userInfo = {
+          loginId: state.loginId,
+          nickname: state.nickname,
+          avatar: state.avatar,
+          value: inputValue
+        }
         const packet = {
             cmd: ENV.SEND_CHAT_MESSAGE,
             msg: userInfo.value
         }
         state.socket.emit("message", packet);
-        state.chatLogs.push(userInfo);
+        addChatLogs(userInfo);
     },
     /**
      * 좋아요버튼 이벤트를 발생시키기 위해 서버에 패킷을 보내는 함수
@@ -195,13 +241,13 @@ const mutations = {
         };
         state.socket.emit("message", packet, (ack) => {
             if(ack.success === "n") {
-                state.chatLogs.push({ nickname: SYSTEM_ID, avatar: false, value: "방 입장 실패!"});
+                addChatLogs({ loginId: SYSTEM_ID, nickname: SYSTEM_ID, avatar: "", value: "방 입장 실패!"});
             }
         });
     },
     /**
      * Alert메시지가 도착하면 오른쪽 아래에 메시지를 보여주는 함수
-     * 만약 열려있는 메시지가 12개 이상이라면 제일 오래된 메시지를 지우고
+     * 만약 열려있는 메시지가 n개 이상이라면 제일 오래된 메시지를 지우고
      * 새 메시지를 보여준다.
      *
      * @param {Element} addedToast 추가할 alert 메시지
@@ -209,11 +255,11 @@ const mutations = {
     updateAndShowAlert(state, addedToast) {
         // @ts-ignore
         const bsToast = new bootstrap.Toast(addedToast);
-        state.bootstrapToasts.push(bsToast);
-        if(state.showingToastIndexArr.length > MAX_VIEW_CNT) {
-            const oldToastIndex = state.showingToastIndexArr[0];
-            state.showingToastIndexArr.splice(0, 1);
-            state.bootstrapToasts[oldToastIndex].hide();
+        state.bootstrapToastList.push(bsToast);
+        if(state.showingToastList.length > MAX_VIEW_COUNT) {
+            const oldToastIndex = state.showingToastList[0];
+            state.showingToastList.splice(0, 1);
+            state.bootstrapToastList[oldToastIndex].hide();
         }
         bsToast.show();
     },

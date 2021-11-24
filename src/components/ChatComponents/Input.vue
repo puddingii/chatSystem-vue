@@ -28,8 +28,7 @@ export default {
             if(this.inputValue === "" || !this.inputValue) {
                 return;
             }
-            const userInfo = { nickname: this.nickname, avatar: this.avatar, value: this.inputValue };
-            this.$store.commit("chat/sendMessage", userInfo);
+            this.$store.commit("chat/sendMessage", this.inputValue);
             this.inputValue = "";
         }
     }

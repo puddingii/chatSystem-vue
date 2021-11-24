@@ -28,19 +28,19 @@ export default {
         this.$refs.chatBoard.scrollTop = this.$refs.chatBoard.scrollHeight - this.$refs.chatBoard.clientHeight;
     },
     computed: {
-        ...mapState(["chatLogs", "nickname"])
+        ...mapState(["chatLogs", "nickname", "loginId"])
     },
     methods: {
         /**
          * 유저 정보에서 닉네임을 가져와서 클래스 이름을 반환하는 함수
          *
-         * @param {{nickname: string, avatar: string, value: string}} userInfo 유저정보를 담고 있는 객체
+         * @param {{loginId: string, nickname: string, avatar: string, value: string}} userInfo 유저정보를 담고 있는 객체
          * @returns {string} 닉네임에 따른 클래스 지정
          */
         logOwner(userInfo) {
-            if(userInfo.nickname === this.nickname)
+            if(userInfo.loginId === this.loginId)
                 return "myLog";
-            else if(userInfo.nickname === "SYSTEM")
+            else if(userInfo.loginId === "SYSTEM")
                 return "systemLog";
             else
                 return "anotherUserLog";
