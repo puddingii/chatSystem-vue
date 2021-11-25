@@ -55,9 +55,6 @@ export default {
          * @param {{loginId: string, nickname: string, avatar: string}} dataInfo 유저정보(id, nickname, avatar)
          */
         handleJoinClick(dataInfo) {
-            if(!dataInfo.avatar) {
-              dataInfo.avatar = "http://t1.daumcdn.net/friends/prod/editor/dc8b3d02-a15a-4afa-a88b-989cf2a50476.jpg";
-            }
             this.$store.commit("initUserInfo", dataInfo);
             this.$store.dispatch("login/checkAndSaveUserInfo", dataInfo);
             this.$store.dispatch("chat/enterRoom");

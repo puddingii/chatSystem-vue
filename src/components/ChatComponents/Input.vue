@@ -6,18 +6,11 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
-
-const { mapState } = createNamespacedHelpers("chat");
-
 export default {
     data() {
         return {
             inputValue: ""
         }
-    },
-    computed: {
-        ...mapState(["nickname", "avatar"])
     },
     methods: {
         /**

@@ -101,7 +101,6 @@ const mutations = {
             addChatLogs({ loginId: SYSTEM_ID, nickname: SYSTEM_ID, avatar: "", value: `${err.msg} - 퇴장 후 다시 들어와주세요.`});
         });
         state.socket.on("message", (packet) => {
-            console.log(packet);
             switch(packet.cmd) {
                 case ENV.RECEIVE_CHAT_MESSAGE:
                     if(packet.from.mem_id !== state.loginId) {
